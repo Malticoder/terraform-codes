@@ -1,4 +1,4 @@
-name: Terraform Deploy
+name: Terraform CI/CD
 
 on:
   push:
@@ -13,6 +13,9 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v3
 
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v2
         with:
@@ -20,17 +23,16 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
 
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v2
-
       - name: Terraform Init
         run: terraform init
+        working-directory: codes-terraform
 
       - name: Terraform Plan
         run: terraform plan
+        working-directory: codes-terraform
 
-      - name: Terraform Apply
-        run: terraform apply -auto-approve
+      - name: Terraform Plan
+        run: terraform plan
+        working-directory: codes-terraform  
 
-      
-    
+        
