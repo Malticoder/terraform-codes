@@ -1,7 +1,8 @@
 terraform {
   backend "s3" {
-    bucket = "loadbalancer-malti-terraform-bucket"
+    bucket = "loadbalancer1-malti1-terraform-bucket"
     key    = "dev/terraform.tfstate"
     region = "us-east-1"
   }
 }
+
