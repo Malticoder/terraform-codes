@@ -47,9 +47,7 @@ resource "aws_instance" "web_server" {
     Name = "Apache-Server"
   }
 }
-resource "aws_s3_bucket" "my_bucket" {
-  bucket = "loadbalancer1-malti1-terraform-bucket"
-}
+
 
 
 
