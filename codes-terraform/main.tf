@@ -1,5 +1,5 @@
-resource "aws_security_group" "web_sg" {
-  name        = "web-security-group"
+resource "aws_security_group" "server_sg" {
+  name        = "server-security-group"
   description = "Allow HTTP and SSH"
 
   ingress {
@@ -32,7 +32,7 @@ resource "aws_instance" "web_server" {
 
   instance_type = "t2.micro"
 
-  vpc_security_group_ids = [aws_security_group.web_sg.id]
+  vpc_security_group_ids = [aws_security_group.server_sg.id]
 
   user_data = <<-EOF
               #!/bin/bash
@@ -47,6 +47,7 @@ resource "aws_instance" "web_server" {
     Name = "Apache-Server"
   }
 }
+
 
 
 
