@@ -1,1 +1,0 @@
-# malti-terraform-code-practice
