@@ -1,23 +1,14 @@
-name: Terraform CI/CD
+name: Terraform Plan Test2
 
 on:
   push:
     branches:
-      - main
+      - test-2
 
   workflow_dispatch:
-    inputs:
-      action:
-        description: "Choose Terraform Action"
-        required: true
-        default: "apply"
-        type: choice
-        options:
-          - apply
-          - destroy
 
 jobs:
-  terraform:
+  terraform-plan:
     runs-on: ubuntu-latest
 
     steps:
@@ -39,18 +30,5 @@ jobs:
         working-directory: codes-terraform
 
       - name: Terraform Plan
-        if: github.event.inputs.action == 'apply'
         run: terraform plan
         working-directory: codes-terraform
-
-      - name: Terraform Apply
-        if: github.event.inputs.action == 'apply'
-        run: terraform apply -auto-approve
-        working-directory: codes-terraform
-
-      - name: Terraform Destroy
-        if: github.event.inputs.action == 'destroy'
-        run: terraform destroy -auto-approve
-        working-directory: codes-terraform
-        
-        
