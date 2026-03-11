@@ -18,7 +18,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-
       - uses: hashicorp/setup-terraform@v2
 
       - name: Configure AWS Credentials
@@ -38,7 +37,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-
       - uses: hashicorp/setup-terraform@v2
 
       - name: Configure AWS Credentials
@@ -47,6 +45,10 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
+
+      - name: Terraform Init
+        run: terraform init
+        working-directory: codes-terraform
 
       - name: Terraform Plan
         run: terraform plan
@@ -59,7 +61,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-
       - uses: hashicorp/setup-terraform@v2
 
       - name: Configure AWS Credentials
@@ -69,7 +70,10 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
 
+      - name: Terraform Init
+        run: terraform init
+        working-directory: codes-terraform
+
       - name: Terraform Apply
         run: terraform apply -auto-approve
         working-directory: codes-terraform
-
