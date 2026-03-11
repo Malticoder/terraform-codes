@@ -17,7 +17,8 @@ on:
           - destroy
 
 jobs:
-  terraform:
+
+  terraform-init:
     runs-on: ubuntu-latest
 
     steps:
@@ -38,19 +39,54 @@ jobs:
         run: terraform init
         working-directory: codes-terraform
 
+
+  terraform-plan:
+    needs: terraform-init
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+
       - name: Terraform Plan
-        if: github.event.inputs.action == 'apply'
         run: terraform plan
         working-directory: codes-terraform
 
+
+  terraform-apply:
+    needs: terraform-plan
+    if: github.event.inputs.action == 'apply'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+
       - name: Terraform Apply
-        if: github.event.inputs.action == 'apply'
         run: terraform apply -auto-approve
         working-directory: codes-terraform
 
+
+  terraform-destroy:
+    needs: terraform-plan
+    if: github.event.inputs.action == 'destroy'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+
       - name: Terraform Destroy
-        if: github.event.inputs.action == 'destroy'
         run: terraform destroy -auto-approve
         working-directory: codes-terraform
-        
+      
         
