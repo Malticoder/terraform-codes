@@ -17,31 +17,18 @@ on:
           - destroy
 
 jobs:
-
-  terraform-init:
+  terraform:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
-      - uses: hashicorp/setup-terraform@v2
-      - uses: aws-actions/configure-aws-credentials@v2
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1
+      - name: Checkout Repository
+        uses: actions/checkout@v3
 
-      - name: Terraform Init
-        run: terraform init
-        working-directory: codes-terraform
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
 
-  terraform-plan:
-    needs: terraform-init
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v3
-      - uses: hashicorp/setup-terraform@v2
-      - uses: aws-actions/configure-aws-credentials@v2
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v2
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -52,28 +39,18 @@ jobs:
         working-directory: codes-terraform
 
       - name: Terraform Plan
+        if: github.event.inputs.action == 'apply'
         run: terraform plan
         working-directory: codes-terraform
 
-  terraform-apply:
-    needs: terraform-plan
-    if: github.event.inputs.action == 'apply'
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v3
-      - uses: hashicorp/setup-terraform@v2
-      - uses: aws-actions/configure-aws-credentials@v2
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1
-
-      - name: Terraform Init
-        run: terraform init
-        working-directory: codes-terraform
-
       - name: Terraform Apply
+        if: github.event.inputs.action == 'apply'
         run: terraform apply -auto-approve
         working-directory: codes-terraform
+
+      - name: Terraform Destroy
+        if: github.event.inputs.action == 'destroy'
+        run: terraform destroy -auto-approve
+        working-directory: codes-terraform 
+        
         
