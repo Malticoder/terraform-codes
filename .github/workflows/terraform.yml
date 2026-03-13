@@ -18,11 +18,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
-      - uses: hashicorp/setup-terraform@v2
+      - uses: actions/checkout@v4
+
+      - uses: hashicorp/setup-terraform@v3
 
       - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v2
+        uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -33,7 +34,7 @@ jobs:
         working-directory: codes-terraform
 
       - name: Upload Terraform Files
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: terraform-init
           path: codes-terraform/
@@ -44,12 +45,15 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/download-artifact@v3
+      - uses: actions/checkout@v4
+
+      - name: Download Terraform Files
+        uses: actions/download-artifact@v4
         with:
           name: terraform-init
           path: codes-terraform
 
-      - uses: hashicorp/setup-terraform@v2
+      - uses: hashicorp/setup-terraform@v3
 
       - name: Terraform Plan
         run: terraform plan
@@ -62,12 +66,15 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/download-artifact@v3
+      - uses: actions/checkout@v4
+
+      - name: Download Terraform Files
+        uses: actions/download-artifact@v4
         with:
           name: terraform-init
           path: codes-terraform
 
-      - uses: hashicorp/setup-terraform@v2
+      - uses: hashicorp/setup-terraform@v3
 
       - name: Terraform Apply
         run: terraform apply -auto-approve
