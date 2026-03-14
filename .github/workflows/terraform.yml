@@ -13,7 +13,8 @@ on:
           - destroy
 
 jobs:
-  terraform:
+
+  terraform-init:
     runs-on: ubuntu-latest
 
     steps:
@@ -32,13 +33,57 @@ jobs:
         run: terraform init
         working-directory: codes-terraform
 
+      - name: Upload Terraform Folder
+        uses: actions/upload-artifact@v4
+        with:
+          name: terraform-files
+          path: codes-terraform
+
+
+  terraform-plan:
+    runs-on: ubuntu-latest
+    needs: terraform-init
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: hashicorp/setup-terraform@v2
+
+      - name: Download Terraform Files
+        uses: actions/download-artifact@v4
+        with:
+          name: terraform-files
+          path: codes-terraform
+
       - name: Terraform Plan
-        run: terraform plan
+        run: terraform plan -out=tfplan
         working-directory: codes-terraform
+
+      - name: Upload Plan
+        uses: actions/upload-artifact@v4
+        with:
+          name: tfplan
+          path: codes-terraform/tfplan
+
+
+  terraform-apply-destroy:
+    runs-on: ubuntu-latest
+    needs: terraform-plan
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: hashicorp/setup-terraform@v2
+
+      - name: Download Plan
+        uses: actions/download-artifact@v4
+        with:
+          name: tfplan
+          path: codes-terraform
 
       - name: Terraform Apply
         if: github.event.inputs.action == 'apply'
-        run: terraform apply -auto-approve
+        run: terraform apply -auto-approve tfplan
         working-directory: codes-terraform
 
       - name: Terraform Destroy
